@@ -19,6 +19,8 @@ export default class MessageOptions extends React.Component {
       return;
     }
     this.setState({ selectedOptionId: option.id });
+
+    // TODO: perform action
   }
 
   styleForOption(option) {
@@ -55,7 +57,7 @@ export default class MessageOptions extends React.Component {
         key={option.id}
         onPress={() => this.onOptionPress(option)}
         style={this.styleForOption(option)}
-        underlayColor={'#f0f0f0'}>
+        underlayColor={Color.leftBubbleBackground}>
         <Text style={this.styleForOptionTitle(option)}>
           {option.title}
         </Text>
@@ -70,7 +72,7 @@ export default class MessageOptions extends React.Component {
           {...this.props}
           containerStyle={{
             left: {
-              backgroundColor: '#f0f0f0',
+              backgroundColor: Color.leftBubbleBackground,
               borderRadius: 15,
             },
 
@@ -123,7 +125,7 @@ const styles = StyleSheet.create({
 
   },
   disabledButton: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: Color.leftBubbleBackground,
   },
   unselectedButton: {
     backgroundColor: 'white',

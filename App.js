@@ -11,6 +11,7 @@ import { GiftedChat, Actions, SystemMessage } from 'react-native-gifted-chat';
 import MessageMath from './CustomChat/MessageMath';
 import MessageOptions from './CustomChat/MessageOptions';
 import Bubble from './CustomChat/Bubble';
+import Color from './CustomChat/Color';
 import { MessageType } from './CustomChat/constants';
 
 export default class Example extends React.Component {
@@ -26,11 +27,9 @@ export default class Example extends React.Component {
     this._isMounted = false;
     this.onSend = this.onSend.bind(this);
     this.onReceive = this.onReceive.bind(this);
-    // this.renderCustomActions = this.renderCustomActions.bind(this);
     this.renderBubble = this.renderBubble.bind(this);
     this.renderSystemMessage = this.renderSystemMessage.bind(this);
     this.renderFooter = this.renderFooter.bind(this);
-    this.onLoadEarlier = this.onLoadEarlier.bind(this);
 
     this._isAlright = null;
   }
@@ -48,30 +47,23 @@ export default class Example extends React.Component {
     this._isMounted = false;
   }
 
-  onLoadEarlier() {
-    this.setState((previousState) => {
-      return {
-        isLoadingEarlier: true,
-      };
-    });
-
-    setTimeout(() => {
-      if (this._isMounted === true) {
-        this.setState((previousState) => {
-          return {
-            messages: GiftedChat.prepend(previousState.messages, require('./data/old_messages.js')),
-            loadEarlier: false,
-            isLoadingEarlier: false,
-          };
-        });
-      }
-    }, 1000); // simulating network
-  }
-
   onSend(messages = []) {
+    const messagesToSend = messages.map(message => ({
+      content: message.text,
+      type: 'text',
+      _id: Math.round(Math.random() * 1000000),
+      user: {
+        _id: 1,
+        name: 'Developer',
+      },
+      createdAt: new Date(),
+      sent: true,
+      received: true,
+    }));
+    
     this.setState((previousState) => {
       return {
-        messages: GiftedChat.append(previousState.messages, messages),
+        messages: GiftedChat.append(previousState.messages, messagesToSend),
       };
     });
 
@@ -119,7 +111,8 @@ export default class Example extends React.Component {
       return {
         messages: GiftedChat.append(previousState.messages, {
           _id: Math.round(Math.random() * 1000000),
-          text: text,
+          content: text,
+          type: 'text',
           createdAt: new Date(),
           user: {
             _id: 2,
@@ -132,26 +125,26 @@ export default class Example extends React.Component {
   }
 
   renderBubble(props) {
-    if (props.currentMessage.type === MessageType.SUGGESTED) {
+    if (props.currentMessage.type === MessageType.TEXT ||
+        props.currentMessage.type === MessageType.MATHML) {
       return (
         <Bubble
           {...props}
           wrapperStyle={{
             left: {
-              backgroundColor: 'transparent',
+              backgroundColor: Color.leftBubbleBackground,
+            },
+            right: {
+              backgroundColor: Color.defaultBlue,
             }
           }}
         />
       );
-    }
+    } 
+    
     return (
       <Bubble
         {...props}
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#f0f0f0',
-          }
-        }}
       />
     );
   }
@@ -206,11 +199,9 @@ export default class Example extends React.Component {
         <GiftedChat
           messages={this.state.messages}
           onSend={this.onSend}
-
           user={{
             _id: 1, // sent messages should have same user._id
           }}
-
           renderBubble={this.renderBubble}
           renderSystemMessage={this.renderSystemMessage}
           renderCustomView={this.renderCustomView}
