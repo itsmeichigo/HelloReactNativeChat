@@ -24,31 +24,31 @@ export default class MessageOptions extends React.Component {
   }
 
   styleForOption(option) {
-    const { lastButton, buttonToNext, unselectedButton, disabledButton, selectedButton } = styles;
+    const { buttonToNext, unselectedButtonColor, disabledButtonColor, selectedButtonColor } = styles;
     const { options } = this.props.currentMessage;
     const isLastOption = options.findIndex(item => option.id === item.id) === options.length - 1;
 
-    let stateStyle = disabledButton;
+    let stateColor = disabledButtonColor;
     if (!this.state.selectedOptionId) {
-      stateStyle = unselectedButton;
+      stateColor = unselectedButtonColor;
     } else if (option.id === this.state.selectedOptionId) {
-      stateStyle = selectedButton;
+      stateColor = selectedButtonColor;
     }
 
-    if (isLastOption) {
-      return [lastButton, stateStyle];
+    if (!isLastOption) {
+      return [buttonToNext, stateColor];
     }
-    return [buttonToNext, stateStyle];
+    return [stateColor];
   }
 
   styleForOptionTitle(option) {
-    const { text, unselectedText, selectedText, disabledText} = styles;
+    const { text, unselectedTextColor, selectedTextColor, disabledTextColor} = styles;
     if (!this.state.selectedOptionId) {
-      return [text, unselectedText];
+      return [text, unselectedTextColor];
     } else if (option.id === this.state.selectedOptionId) {
-      return [text, selectedText];
+      return [text, selectedTextColor];
     }
-    return [text, disabledText];
+    return [text, disabledTextColor];
   }
 
   renderOptions() {
@@ -74,8 +74,8 @@ export default class MessageOptions extends React.Component {
             left: {
               backgroundColor: Color.leftBubbleBackground,
               borderRadius: 15,
+              borderTopLeftRadius: 3,
             },
-
           }} />
           <View style={styles.buttonWrapper}>
             {this.renderOptions()}
@@ -96,14 +96,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 40,
     textAlign: 'center',
+    marginLeft: 25,
+    marginRight: 25,
   },
-  unselectedText: {
+  unselectedTextColor: {
     color: Color.defaultBlue,
   },
-  selectedText: {
+  selectedTextColor: {
     color: 'white',
   },
-  disabledText: {
+  disabledTextColor: {
     color: 'black',
   },
   buttonWrapper: {
@@ -112,22 +114,19 @@ const styles = StyleSheet.create({
     borderColor: Color.defaultColor,
     overflow: 'hidden',
     marginTop: 5,
+    alignSelf: 'baseline',
   },
   buttonToNext: {
     borderBottomWidth: 0.5,
     borderColor: Color.defaultColor,
   },
-  lastButton: {
-
-  },
-  selectedButton: {
+  selectedButtonColor: {
     backgroundColor: Color.defaultBlue,
-
   },
-  disabledButton: {
+  disabledButtonColor: {
     backgroundColor: Color.leftBubbleBackground,
   },
-  unselectedButton: {
+  unselectedButtonColor: {
     backgroundColor: 'white',
   }
 });
