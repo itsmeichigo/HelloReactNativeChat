@@ -7,10 +7,11 @@ import {
   SafeAreaView,
 } from 'react-native';
 
-import {GiftedChat, Actions, SystemMessage} from 'react-native-gifted-chat';
-// import CustomActions from './CustomActions';
+import { GiftedChat, Actions, SystemMessage } from 'react-native-gifted-chat';
 import MessageMath from './CustomChat/MessageMath';
+import MessageOptions from './CustomChat/MessageOptions';
 import Bubble from './CustomChat/Bubble';
+import { MessageType } from './CustomChat/constants';
 
 export default class Example extends React.Component {
   constructor(props) {
@@ -130,32 +131,19 @@ export default class Example extends React.Component {
     });
   }
 
-  // renderCustomActions(props) {
-  //   if (Platform.OS === 'ios') {
-  //     return (
-  //       <CustomActions
-  //         {...props}
-  //       />
-  //     );
-  //   }
-  //   const options = {
-  //     'Action 1': (props) => {
-  //       alert('option 1');
-  //     },
-  //     'Action 2': (props) => {
-  //       alert('option 2');
-  //     },
-  //     'Cancel': () => {},
-  //   };
-  //   return (
-  //     <Actions
-  //       {...props}
-  //       options={options}
-  //     />
-  //   );
-  // }
-
   renderBubble(props) {
+    if (props.currentMessage.type === MessageType.SUGGESTED) {
+      return (
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            left: {
+              backgroundColor: 'transparent',
+            }
+          }}
+        />
+      );
+    }
     return (
       <Bubble
         {...props}
@@ -183,11 +171,20 @@ export default class Example extends React.Component {
   }
 
   renderCustomView(props) {
-    return (
-      <MessageMath
-        {...props}
-      />
-    );
+    if (props.currentMessage.type === MessageType.MATHML) {
+      return (
+        <MessageMath
+          {...props}
+        />
+      );
+    } else if (props.currentMessage.type === MessageType.SUGGESTED) {
+      return (
+        <MessageOptions
+          {...props}
+        />
+      );
+    }
+    return null;
   }
 
   renderFooter(props) {
@@ -214,7 +211,6 @@ export default class Example extends React.Component {
             _id: 1, // sent messages should have same user._id
           }}
 
-          // renderActions={this.renderCustomActions}
           renderBubble={this.renderBubble}
           renderSystemMessage={this.renderSystemMessage}
           renderCustomView={this.renderCustomView}

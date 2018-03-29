@@ -11,8 +11,10 @@ import {
   ViewPropTypes,
 } from 'react-native';
 
-import {MessageText, MessageImage, Time} from 'react-native-gifted-chat';
+import { MessageImage, Time } from 'react-native-gifted-chat';
 
+import { MessageType } from './constants';
+import MessageText from './MessageText';
 import Color from './Color';
 import { isSameUser, isSameDay, warnDeprecated } from './utils';
 
@@ -26,7 +28,7 @@ export default class Bubble extends React.Component {
   onLongPress() {
     if (this.props.onLongPress) {
       this.props.onLongPress(this.context, this.props.currentMessage);
-    } else if (this.props.currentMessage.text) {
+    } else if (this.props.currentMessage.content) {
       const options = ['Copy Text', 'Cancel'];
       const cancelButtonIndex = options.length - 1;
       this.context.actionSheet().showActionSheetWithOptions(
@@ -37,7 +39,7 @@ export default class Bubble extends React.Component {
         (buttonIndex) => {
           switch (buttonIndex) {
             case 0:
-              Clipboard.setString(this.props.currentMessage.text);
+              Clipboard.setString(this.props.currentMessage.content);
               break;
             default:
               break;
@@ -74,7 +76,7 @@ export default class Bubble extends React.Component {
   }
 
   renderMessageText() {
-    if (this.props.currentMessage.text) {
+    if (this.props.currentMessage.type === MessageType.TEXT) {
       const { containerStyle, wrapperStyle, ...messageTextProps } = this.props;
       if (this.props.renderMessageText) {
         return this.props.renderMessageText(messageTextProps);
